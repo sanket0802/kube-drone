@@ -1,0 +1,38 @@
+TVM UI Deployment:
+----------------------------
+ssh -i Downloads/omnikey.pem ubuntu@3.108.191.191
+sudo bash
+cd tvm-dashboard/
+git pull
+sanket0802
+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
+sudo npm install
+npm run build
+cp -rv build/* /var/www/html/
+systemctl restart apache2.service
+
+
+TVM API Deployment:   (server)
+------------------------------
+ssh -i Downloads/omnikey.pem ubuntu@3.108.191.191
+sudo bash
+cd tvm-server
+git pull
+kill -9 $(lsof -t -i:8080)
+mv vip-0.0.1-SNAPSHOT.jar ../backup/
+mvn clean install
+cp -rv target/vip-0.0.1-SNAPSHOT.jar .
+nohup java -jar vip-0.0.1-SNAPSHOT.jar > /tmp/vip.log 2>&1 &
+tail -f /tmp/vip.log
+
+
+DATABASE Connection:
+---------------------------------
+mysql -u dbadmin -pdbadmin123
+show databases;
+use vip;
+show tables;
+select * from tvm_status;
+
+
+

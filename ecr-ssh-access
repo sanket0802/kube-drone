@@ -1,0 +1,41 @@
+AKIAUMFXW43ZKXOQBE7C-------access key
+XBzL8xcUaNzgLNdz19t2O7yjA27LNjKnaDJcsu80   -----------secret acces key
+
+
+kind: pipeline 
+name: default 
+type: docker 
+steps:
+- name: publish  
+  image: plugins/ecr
+  settings:
+    access_key:
+      from_secret: aws_access_key_id
+    secret_key:
+      from_secret: aws_secret_access_key
+    repo: 301032990450.dkr.ecr.us-east-1.amazonaws.com/ecr-repo1
+    registry: 301032990450.dkr.ecr.us-east-1.amazonaws.com
+- name: ssh commands
+  image: appleboy/drone-ssh
+  settings:
+    host: 52.205.103.71
+    username: ubuntu
+    key:
+      from secret: ssh_key
+    port: 22
+    script: 
+    - sudo chown ubuntu:ubuntu /var/run/docker.sock
+    - sudo aws ecr get-login-password --region us-east-1 | sudo docker login --username AWS --password-stdin 301032990450.dkr.ecr.us-east-1.amazonaws.com
+    - sudo docker pull 301032990450.dkr.ecr.us-east-1.amazonaws.com/apacheimage:latest
+    - sudo docker run -idt -p 8080:80 --name apache 301032990450.dkr.ecr.us-east-1.amazonaws.com/apacheimage:latest 
+    
+    
+    
+    
+FROM ubuntu 
+ARG DEBIAN_FRONTEND=noninteractive
+RUN apt-get update -y
+RUN apt-get install apache2 -y
+EXPOSE 80
+ENTRYPOINT ["/usr/sbin/apache2ctl"]
+CMD ["-D","FOREGROUND"]

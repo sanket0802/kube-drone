@@ -1,0 +1,55 @@
+========================================================
+   		Tvm_UI_Deployment
+========================================================
+source /usr/share/bash-completion/bash_completion
+git clone https://github.com/areddyraja/tvm-dashboard.git
+cd tvm-dashboard/
+vim src/api/instances.json
+apt-get update
+cd ..
+#curl -sL https://deb.nodesource.com/setup_16.x -o nodesource_setup.sh
+#bash nodesource_setup.sh
+apt install nodejs -y 
+apt install npm -y
+node -v
+npm -v
+apt-get install apache2 -y
+systemctl enable apache2
+systemctl start apache2
+git pull
+sudo npm install
+npm run build
+rm -rf /var/www/html/index.html
+cp -rv build/* /var/www/html/
+systemctl restart apache2.service
+netstat -tunlp
+
+========================================================
+   		Tvm_Api_Deployment
+========================================================
+cd tvm-server/
+sudo apt-get update
+sudo bash
+apt-get install mysql-server maven -y
+mvn -v
+mysql_secure_installation
+mysql -u root -padmin@123
+
+create user'dbadmin'@'%' identified by 'admin@123';
+grant all privileges on *.* to 'dbadmin'@'%';
+flush privileges;
+
+mysql -u dbadmin -padmin@123 
+
+apt-get install openjdk-8-jdk -y
+update-alternatives --config java
+git pull https://github.com/areddyraja/tvm-server.git
+vim src/main/resources/application.properties
+apt-get install net-tools -y
+netstat -tunlp
+mvn clean install
+cd tartget
+cp vip-0.0.1-SNAPSHOT.jar /home/ubuntu/tvm-server/
+nohup java -jar vip-0.0.1-SNAPSHOT.jar > /tmp/vip.log 2>&1 &
+java -jar vip-0.0.1-SNAPSHOT.jar
+tail -f /tmp/vip.log
