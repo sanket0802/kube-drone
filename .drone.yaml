@@ -6,7 +6,7 @@ steps:
   image: plugins/ecr
   settings:
     access_key:
-      from_secret: aws_access_key_id
+      from_secret: aws_access_key
     secret_key:
       from_secret: aws_secret_access_key
     repo: 659994610574.dkr.ecr.us-east-1.amazonaws.com/drone-ecr-repo
